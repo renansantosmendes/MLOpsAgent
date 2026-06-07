@@ -65,6 +65,31 @@ agent = MLOpsTrainingAgent(
 final_state = agent.run("https://example.com/new_data.csv")
 ```
 
+## Architecture
+
+This agent uses **StateGraph with Nodes** instead of **LLM Agent with Tools**. Why?
+
+- ⚡ **Performance**: No LLM calls → fast execution
+- 💰 **Cost**: Zero LLM costs → predictable budget
+- 🎯 **Reliability**: Deterministic flow → consistent behavior
+- 🔍 **Debuggability**: Clear execution path → easy troubleshooting
+
+**📖 Want to understand the difference?**
+- [Architecture Decision Document](ARCHITECTURE.md)
+- [Comparison Examples](examples/README.md)
+
+```python
+# This is a NODE (no @tool decorator needed)
+def node_data_drift(state: dict) -> dict:
+    """Processes state through drift detection - part of fixed graph flow"""
+    result = data_drift_tool(state["reference_data"], state["new_data"])
+    return {**state, **result}
+
+# NOT a TOOL (which would be used by LLM reasoning)
+# @tool  ← We don't use this!
+# def detect_drift(...): ...
+```
+
 ## Testing
 
 Run unit tests with pytest:
