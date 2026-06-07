@@ -19,6 +19,7 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
+
 try:
     from xgboost import XGBClassifier
 except Exception:
@@ -28,6 +29,7 @@ from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 
 logger = logging.getLogger(__name__)
+
 
 def model_training_tool(
     input_data_train: pd.DataFrame,
@@ -98,23 +100,33 @@ def model_training_tool(
     )
 
     candidate_classifiers = {
-        "RandomForest": RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1),
-        "GradientBoosting_XGB": XGBClassifier(
-            n_estimators=100,
-            random_state=42,
-            eval_metric="logloss",
-            use_label_encoder=False,
-            verbosity=0,
-        ) if XGBClassifier is not None else None,
+        "RandomForest": RandomForestClassifier(
+            n_estimators=100, random_state=42, n_jobs=-1
+        ),
+        "GradientBoosting_XGB": (
+            XGBClassifier(
+                n_estimators=100,
+                random_state=42,
+                eval_metric="logloss",
+                use_label_encoder=False,
+                verbosity=0,
+            )
+            if XGBClassifier is not None
+            else None
+        ),
         "LogisticRegression": LogisticRegression(max_iter=1000, random_state=42),
         "SupportVectorMachine": SVC(probability=True, random_state=42),
         "KNearestNeighbors": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
     }
 
     # Remove any None entries if XGBClassifier wasn't available
-    candidate_classifiers = {k: v for k, v in candidate_classifiers.items() if v is not None}
+    candidate_classifiers = {
+        k: v for k, v in candidate_classifiers.items() if v is not None
+    }
 
-    cross_val_splitter = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=42)
+    cross_val_splitter = StratifiedKFold(
+        n_splits=cv_folds, shuffle=True, random_state=42
+    )
     scoring_metrics = {"f1_macro": "f1_macro", "roc_auc": "roc_auc_ovr"}
 
     candidate_results: dict[str, Any] = {}
@@ -268,9 +280,7 @@ def model_evaluation_tool(
     roc_auc_averaging = "ovr" if number_of_classes > 2 else "raise"
 
     if number_of_classes == 2:
-        roc_auc_value = float(
-            roc_auc_score(target_test, predicted_probabilities[:, 1])
-        )
+        roc_auc_value = float(roc_auc_score(target_test, predicted_probabilities[:, 1]))
     else:
         roc_auc_value = float(
             roc_auc_score(
@@ -314,7 +324,9 @@ def model_evaluation_tool(
 
     if current_model_metrics is None:
         is_better = True
-        logger.info("model_evaluation_tool: no production model found; new model is accepted by default")
+        logger.info(
+            "model_evaluation_tool: no production model found; new model is accepted by default"
+        )
     else:
         production_f1 = current_model_metrics.get("f1_macro", 0.0)
         new_f1 = new_model_metrics["f1_macro"]

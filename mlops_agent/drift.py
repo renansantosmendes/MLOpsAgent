@@ -11,18 +11,24 @@ except Exception:
     # Provide minimal fallbacks if Evidently is not installed
     class DataDriftPreset:  # type: ignore
         pass
+
     class DataQualityPreset:  # type: ignore
         pass
+
     class Report:  # type: ignore
         def __init__(self, *args, **kwargs):
             pass
+
         def run(self, *args, **kwargs):
             class _S:
                 def dict(self_inner):
                     return {"metrics": []}
+
             return _S()
 
+
 logger = None  # kept for compatibility with original logging usage if needed
+
 
 def data_drift_tool(
     reference_data: pd.DataFrame,
@@ -36,7 +42,9 @@ def data_drift_tool(
     configured threshold.
     """
     if new_data.empty:
-        raise ValueError("new_data is empty; drift analysis requires at least one record.")
+        raise ValueError(
+            "new_data is empty; drift analysis requires at least one record."
+        )
 
     logger = __import__(__name__).__dict__.get("logger")
     if logger:
@@ -48,7 +56,9 @@ def data_drift_tool(
 
     try:
         evidently_report = Report(metrics=[DataDriftPreset()])
-        snapshot = evidently_report.run(reference_data=reference_data, current_data=new_data)
+        snapshot = evidently_report.run(
+            reference_data=reference_data, current_data=new_data
+        )
         snapshot_dict = snapshot.dict()
     except Exception:
         # If Evidently is not available, fall back to a minimal structure for unit tests

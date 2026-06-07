@@ -19,6 +19,7 @@ def test_deploy_application_tool_saves_artifacts(tmp_path, monkeypatch):
         return mock_response
 
     import mlops_agent.deployment
+
     monkeypatch.setattr(mlops_agent.deployment.requests, "post", mock_post)
 
     # Use a minimal trained pipeline placeholder

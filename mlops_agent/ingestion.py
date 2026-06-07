@@ -10,6 +10,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+
 def data_process_tool(
     input_source: str | pd.DataFrame,
     reference_dataset_path: str,
@@ -20,10 +21,14 @@ def data_process_tool(
     incoming source by row-level hashing. New records are appended to the
     reference to form a merged dataset returned alongside diagnostic flags.
     """
-    logger.info("data_process_tool: loading reference dataset from '%s'", reference_dataset_path)
+    logger.info(
+        "data_process_tool: loading reference dataset from '%s'", reference_dataset_path
+    )
 
     reference_data = pd.read_csv(reference_dataset_path)
-    logger.info("data_process_tool: reference dataset loaded with %d rows", len(reference_data))
+    logger.info(
+        "data_process_tool: reference dataset loaded with %d rows", len(reference_data)
+    )
 
     if isinstance(input_source, str):
         logger.info("data_process_tool: fetching new data from URL '%s'", input_source)

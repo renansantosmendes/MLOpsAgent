@@ -8,6 +8,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+
 def deploy_application_tool(
     trained_pipeline,
     new_model_metrics: dict[str, float],
@@ -32,7 +33,9 @@ def deploy_application_tool(
             f"Failed to save model artifact to '{model_artifact_path}': {exc}"
         ) from exc
 
-    logger.info("deploy_application_tool: saving metrics to '%s'", metrics_artifact_path)
+    logger.info(
+        "deploy_application_tool: saving metrics to '%s'", metrics_artifact_path
+    )
     try:
         Path(metrics_artifact_path).parent.mkdir(parents=True, exist_ok=True)
         with open(metrics_artifact_path, "w", encoding="utf-8") as metrics_file:

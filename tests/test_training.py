@@ -1,17 +1,25 @@
 import pandas as pd
 import numpy as np
-from mlops_agent.training import model_training_tool, model_selection_tool, model_evaluation_tool
+from mlops_agent.training import (
+    model_training_tool,
+    model_selection_tool,
+    model_evaluation_tool,
+)
 
 
 def test_model_training_tool():
     # Generate simple synthetic dataset
-    data = pd.DataFrame({
-        "feature1": np.random.rand(100),
-        "feature2": np.random.rand(100),
-        "target": np.random.choice(["A", "B"], size=100),
-    })
+    data = pd.DataFrame(
+        {
+            "feature1": np.random.rand(100),
+            "feature2": np.random.rand(100),
+            "target": np.random.choice(["A", "B"], size=100),
+        }
+    )
 
-    result = model_training_tool(input_data_train=data, target_column="target", cv_folds=3)
+    result = model_training_tool(
+        input_data_train=data, target_column="target", cv_folds=3
+    )
 
     assert "candidate_results" in result
     assert len(result["candidate_results"]) > 0
